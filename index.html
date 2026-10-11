@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7fd3ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Острів тваринок — таблиця множення</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky1: #7fd3ff;
+  --sky2: #d4f3ff;
+  --sand: #ffe8b0;
+  --text: #2d2a4a;
+  --muted: #6e6a92;
+  --card: #ffffff;
+  --line: #ece7ff;
+  --green: #3ccf6e;
+  --green-d: #22a04f;
+  --red: #ff6b6b;
+  --red-d: #d94b4b;
+  --yellow: #ffcd38;
+  --yellow-d: #e0a800;
+  --pink: #ff7eb3;
+  --pink-d: #e0558f;
+  --blue: #4da3ff;
+  --blue-d: #2f7ed9;
+  --purple: #9b7bff;
+  --purple-d: #7154e0;
+  --orange: #ff9f43;
+  --orange-d: #e07a1c;
+  --radius: 22px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 800;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 55%, var(--sand) 100%) fixed;
+  overflow-x: hidden;
+  user-select: none; -webkit-user-select: none;
+  touch-action: manipulation;
+}
+button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+
+/* хмаринки */
+.clouds { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.cloud {
+  position: absolute; background: #fff; border-radius: 999px; opacity: .8;
+  animation: drift linear infinite;
+}
+.cloud::before, .cloud::after { content: ""; position: absolute; background: #fff; border-radius: 50%; }
+.cloud::before { width: 55%; height: 160%; left: 15%; top: -70%; }
+.cloud::after  { width: 40%; height: 130%; right: 12%; top: -45%; }
+@keyframes drift { from { transform: translateX(-30vw); } to { transform: translateX(130vw); } }
+
+.app {
+  position: relative; z-index: 1;
+  max-width: 480px; margin: 0 auto; min-height: 100dvh;
+  padding: max(14px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+  display: flex; flex-direction: column;
+}
+.screen { display: none; flex: 1; flex-direction: column; animation: fadeIn .3s ease; }
+.screen.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+
+/* ---------- кнопки ---------- */
+.btn {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 14px 18px; border-radius: var(--radius);
+  font-size: 20px; font-weight: 900; text-align: left;
+  background: var(--card); box-shadow: 0 6px 0 #d9d2f5;
+  transition: transform .1s, box-shadow .1s;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #d9d2f5; }
+.btn--center { justify-content: center; text-align: center; }
+.btn .emoji { font-size: 36px; line-height: 1; }
+.btn small { display: block; font-size: 13px; font-weight: 700; opacity: .85; }
+.btn--green  { background: var(--green);  color: #fff; box-shadow: 0 6px 0 var(--green-d); }
+.btn--yellow { background: var(--yellow); color: #4a3500; box-shadow: 0 6px 0 var(--yellow-d); }
+.btn--pink   { background: var(--pink);   color: #fff; box-shadow: 0 6px 0 var(--pink-d); }
+.btn--blue   { background: var(--blue);   color: #fff; box-shadow: 0 6px 0 var(--blue-d); }
+.btn--purple { background: var(--purple); color: #fff; box-shadow: 0 6px 0 var(--purple-d); }
+.btn--orange { background: var(--orange); color: #fff; box-shadow: 0 6px 0 var(--orange-d); }
+.btn--green:active  { box-shadow: 0 2px 0 var(--green-d); }
+.btn--yellow:active { box-shadow: 0 2px 0 var(--yellow-d); }
+.btn--pink:active   { box-shadow: 0 2px 0 var(--pink-d); }
+.btn--blue:active   { box-shadow: 0 2px 0 var(--blue-d); }
+.btn--purple:active { box-shadow: 0 2px 0 var(--purple-d); }
+.btn--orange:active { box-shadow: 0 2px 0 var(--orange-d); }
+
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  background: var(--card); display: grid; place-items: center; font-size: 20px;
+  box-shadow: 0 4px 0 #d9d2f5;
+}
+.icon-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #d9d2f5; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--card); padding: 8px 14px; border-radius: 999px; font-size: 17px;
+  box-shadow: 0 4px 0 #d9d2f5;
+}
+
+/* ---------- головна ---------- */
+.home-top { display: flex; gap: 8px; align-items: center; }
+.home-top .spacer { flex: 1; }
+.hero { text-align: center; margin: 18px 0 20px; }
+.hero-animals { font-size: 44px; letter-spacing: -4px; }
+.hero-animals span { display: inline-block; animation: hop 2.4s ease-in-out infinite; }
+.hero-animals span:nth-child(2) { animation-delay: .3s; }
+.hero-animals span:nth-child(3) { animation-delay: .6s; }
+.hero-animals span:nth-child(4) { animation-delay: .9s; }
+.hero-animals span:nth-child(5) { animation-delay: 1.2s; }
+@keyframes hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-14px); } }
+.hero h1 { font-size: 32px; line-height: 1.1; font-weight: 900; margin-top: 6px; }
+.hero h1 span { color: var(--pink-d); }
+.hero p { color: var(--muted); margin-top: 6px; font-size: 15px; }
+.menu { display: grid; gap: 12px; }
+
+/* ---------- заголовок ---------- */
+.screen-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.screen-head h2 { font-size: 24px; font-weight: 900; flex: 1; }
+.sub { color: var(--muted); font-size: 15px; margin: -8px 0 14px; }
+
+/* ---------- острів ---------- */
+.island { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.friend {
+  background: var(--card); border-radius: var(--radius); padding: 12px 10px 10px;
+  text-align: center; box-shadow: 0 6px 0 #d9d2f5; position: relative;
+  transition: transform .1s;
+}
+.friend:active { transform: translateY(4px); box-shadow: 0 2px 0 #d9d2f5; }
+.friend .num {
+  position: absolute; top: 10px; left: 10px; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; font-size: 17px;
+}
+.friend .face { font-size: 48px; line-height: 1.2; }
+.friend.locked .face { filter: grayscale(1) brightness(1.15); opacity: .45; }
+.friend .name { font-size: 15px; }
+.friend .stars { font-size: 15px; color: var(--yellow-d); letter-spacing: 1px; }
+
+/* ---------- навчальна картка ---------- */
+.learn-head { text-align: center; margin-bottom: 10px; }
+.learn-head .face { font-size: 64px; line-height: 1.1; display: inline-block; animation: hop 2.4s infinite; }
+.trick {
+  background: #fff8d6; border: 2px dashed var(--yellow); border-radius: var(--radius);
+  padding: 12px 14px; font-size: 15px; line-height: 1.45; margin-bottom: 12px;
+}
+.trick b { color: var(--orange-d); }
+.sheet {
+  background: var(--card); border-radius: var(--radius); padding: 10px 14px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; margin-bottom: 16px;
+}
+.sheet button {
+  font-size: 19px; display: flex; justify-content: space-between; padding: 7px 2px;
+  border-bottom: 1px dashed var(--line); text-align: left;
+}
+.sheet button b { color: var(--blue-d); }
+.sheet button.hide b { color: transparent; background: var(--line); border-radius: 8px; min-width: 34px; }
+.learn-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; }
+
+/* ---------- гра ---------- */
+.game-top { display: flex; align-items: center; gap: 10px; }
+.progress { flex: 1; display: flex; gap: 4px; }
+.progress i { flex: 1; height: 12px; border-radius: 999px; background: rgba(255,255,255,.7); transition: background .3s; }
+.progress i.done { background: var(--green); }
+.progress i.miss { background: var(--orange); }
+
+.buddy { display: flex; align-items: flex-end; gap: 10px; margin: 14px 0 10px; min-height: 78px; }
+.buddy .face { font-size: 60px; line-height: 1; transition: transform .2s; }
+.buddy .face.jump { animation: jump .5s; }
+.buddy .face.sad { animation: wobble .5s; }
+@keyframes jump { 40% { transform: translateY(-18px) scale(1.1); } }
+@keyframes wobble { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+.bubble {
+  position: relative; background: var(--card); border-radius: 18px; padding: 10px 14px;
+  font-size: 16px; line-height: 1.35; flex: 1; margin-bottom: 14px;
+  box-shadow: 0 4px 0 #d9d2f5;
+}
+.bubble::before {
+  content: ""; position: absolute; left: -8px; bottom: 12px;
+  border: 8px solid transparent; border-right-color: var(--card); border-left: 0;
+}
+
+.task {
+  background: var(--card); border-radius: 26px; padding: 16px 12px 18px;
+  text-align: center; margin-bottom: 14px; box-shadow: 0 6px 0 #d9d2f5;
+}
+.task-type { font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.question { font-size: 54px; font-weight: 900; line-height: 1.1; }
+.question .gap {
+  display: inline-block; min-width: 56px; padding: 0 6px;
+  color: var(--pink-d); border-bottom: 5px solid var(--pink); border-radius: 4px;
+}
+.task.shake { animation: shake .4s; }
+@keyframes shake { 20%,60% { transform: translateX(-10px); } 40%,80% { transform: translateX(10px); } }
+.dots { display: inline-grid; gap: 4px; margin-top: 12px; }
+.dots i { width: 11px; height: 11px; border-radius: 50%; }
+
+.answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.answer {
+  padding: 18px 0; border-radius: var(--radius); font-size: 32px; font-weight: 900;
+  background: var(--card); box-shadow: 0 6px 0 #d9d2f5;
+  transition: transform .1s, background .2s, color .2s;
+}
+.answer:active { transform: translateY(4px); box-shadow: 0 2px 0 #d9d2f5; }
+.answer.right { background: var(--green); color: #fff; box-shadow: 0 6px 0 var(--green-d); }
+.answer.wrong { background: var(--red);   color: #fff; box-shadow: 0 6px 0 var(--red-d); }
+.answer.tf-yes { color: var(--green-d); }
+.answer.tf-no  { color: var(--red-d); }
+.answers.locked .answer { pointer-events: none; }
+.next-btn { margin-top: 14px; display: none; }
+.next-btn.show { display: flex; }
+
+/* ---------- кульки ---------- */
+.balloon-hud { display: flex; align-items: center; gap: 10px; }
+.balloon-hud .goal { flex: 1; text-align: center; font-size: 18px; }
+.balloon-hud .goal b { color: var(--pink-d); font-size: 22px; }
+.sky {
+  position: relative; flex: 1; margin-top: 12px; border-radius: 26px; overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.1));
+  min-height: 420px;
+}
+.balloon {
+  position: absolute; width: 74px; height: 88px; border-radius: 50% 50% 48% 48%;
+  display: grid; place-items: center; color: #fff; font-size: 26px; font-weight: 900;
+  box-shadow: inset -8px -10px 0 rgba(0,0,0,.12);
+  text-shadow: 0 2px 0 rgba(0,0,0,.18);
+}
+.balloon::after {
+  content: ""; position: absolute; bottom: -38px; left: 50%; width: 2px; height: 38px;
+  background: rgba(45,42,74,.35);
+}
+.balloon.pop { animation: popB .25s forwards; pointer-events: none; }
+@keyframes popB { to { transform: scale(1.6); opacity: 0; } }
+.balloon.bad { animation: shake .3s; background: #9a96b8 !important; }
+.hearts { font-size: 20px; letter-spacing: 2px; }
+
+/* ---------- пари ---------- */
+.pairs-info { display: flex; justify-content: space-between; color: var(--muted); font-size: 16px; margin-bottom: 12px; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.card {
+  aspect-ratio: 3 / 3.4; perspective: 600px;
+}
+.card-inner {
+  position: relative; width: 100%; height: 100%;
+  transition: transform .4s; transform-style: preserve-3d;
+}
+.card.open .card-inner, .card.matched .card-inner { transform: rotateY(180deg); }
+.card-face {
+  position: absolute; inset: 0; border-radius: 18px; backface-visibility: hidden;
+  display: grid; place-items: center; box-shadow: 0 5px 0 rgba(0,0,0,.12);
+}
+.card-back { background: linear-gradient(135deg, var(--purple), var(--pink)); font-size: 34px; }
+.card-front { background: var(--card); transform: rotateY(180deg); font-size: 26px; font-weight: 900; }
+.card-front.ans { color: var(--blue-d); font-size: 32px; }
+.card.matched .card-front { background: #dcf9e6; color: var(--green-d); }
+
+/* ---------- результат ---------- */
+.result { text-align: center; justify-content: center; }
+.result .big-face { font-size: 90px; line-height: 1.1; animation: jump 1s infinite; display: inline-block; }
+.result h2 { font-size: 30px; font-weight: 900; margin-top: 6px; }
+.result p { color: var(--muted); font-size: 17px; margin-top: 6px; }
+.result .score { font-size: 54px; color: var(--pink-d); }
+.result-stars { font-size: 56px; margin: 8px 0; }
+.result-stars span { display: inline-block; filter: grayscale(1); opacity: .25; }
+.result-stars span.on { filter: none; opacity: 1; animation: starIn .5s backwards; }
+.result-stars span.on:nth-child(2) { animation-delay: .25s; }
+.result-stars span.on:nth-child(3) { animation-delay: .5s; }
+@keyframes starIn { from { transform: scale(0) rotate(-90deg); } }
+.sticker {
+  display: inline-block; margin-top: 12px; padding: 10px 16px; border-radius: 999px;
+  background: #fff8d6; color: var(--orange-d); font-size: 16px;
+}
+.result .actions { display: grid; gap: 12px; margin-top: 24px; }
+
+/* ---------- вибір числа ---------- */
+.num-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.num-btn {
+  aspect-ratio: 1; border-radius: 22px; color: #fff; font-size: 34px; font-weight: 900;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: 0 6px 0 rgba(0,0,0,.15);
+}
+.num-btn small { font-size: 26px; }
+.num-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.15); }
+
+/* ---------- моя таблиця ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 14px; border-radius: 4px; }
+.grid10 { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
+.grid10 > * { aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center; font-size: clamp(9px, 2.8vw, 14px); }
+.grid10 .h { font-size: clamp(14px, 4vw, 20px); }
+.m0 { background: rgba(255,255,255,.75); color: var(--muted); }
+.m1 { background: #ff9a9a; color: #6b1010; }
+.m2 { background: #ffd66b; color: #5a4100; }
+.m3 { background: #6fe39a; color: #0d4a24; }
+.cell-info { text-align: center; min-height: 110px; margin-top: 12px; background: var(--card); border-radius: var(--radius); padding: 14px; }
+.cell-info .eq { font-size: 32px; }
+.cell-info .eq b { color: var(--blue-d); }
+
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+.float-text {
+  position: fixed; font-size: 26px; font-weight: 900; pointer-events: none; z-index: 11;
+  animation: floatUp .9s forwards; text-shadow: 0 2px 0 #fff;
+}
+@keyframes floatUp { to { transform: translateY(-70px); opacity: 0; } }
+
+@media (max-height: 700px) {
+  .question { font-size: 44px; }
+  .answer { padding: 13px 0; font-size: 28px; }
+  .buddy { margin: 8px 0 6px; min-height: 64px; }
+  .buddy .face { font-size: 48px; }
+  .hero { margin: 10px 0 14px; }
+  .btn { padding: 11px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="clouds" id="clouds"></div>
+<canvas id="confetti"></canvas>
+
+<main class="app">
+
+  <!-- ===== ГОЛОВНА ===== -->
+  <section class="screen active" id="home">
+    <div class="home-top">
+      <span class="pill">🍎 <span id="apples">0</span></span>
+      <span class="pill">🐾 <span id="friends">0</span>/10</span>
+      <span class="spacer"></span>
+      <button class="icon-btn" id="soundBtn" aria-label="Звук">🔊</button>
+    </div>
+
+    <div class="hero">
+      <div class="hero-animals"><span>🐰</span><span>🐸</span><span>🐼</span><span>🐙</span><span>🦁</span></div>
+      <h1>Острів тваринок<br><span>таблиця множення</span></h1>
+      <p>Подружися з усіма тваринками острова!</p>
+    </div>
+
+    <div class="menu">
+      <button class="btn btn--green" data-go="island">
+        <span class="emoji">🏝️</span>
+        <span>Острів тваринок<small>Кожна тваринка — нове число</small></span>
+      </button>
+      <button class="btn btn--purple" data-start="review">
+        <span class="emoji">🦉</span>
+        <span>Повторення з Совою<small>Усе вперемішку, складне — частіше</small></span>
+      </button>
+      <button class="btn btn--pink" data-go="balloonPick">
+        <span class="emoji">🎈</span>
+        <span>Лопни кульки<small>Лови відповіді, поки летять</small></span>
+      </button>
+      <button class="btn btn--blue" data-start="pairs">
+        <span class="emoji">🃏</span>
+        <span>Знайди пару<small>Гра на пам'ять</small></span>
+      </button>
+      <button class="btn btn--yellow" data-go="table">
+        <span class="emoji">📋</span>
+        <span>Моя таблиця<small>Що вже знаю, а що ще ні</small></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== ОСТРІВ ===== -->
+  <section class="screen" id="island">
+    <div class="screen-head">
+      <button class="icon-btn" data-go="home" aria-label="Назад">←</button>
+      <h2>Острів тваринок</h2>
+    </div>
+    <p class="sub">Пройди таблицю — і тваринка стане твоїм другом!</p>
+    <div class="island" id="islandList"></div>
+  </section>
+
+  <!-- ===== НАВЧАННЯ ===== -->
+  <section class="screen" id="learn">
+    <div class="screen-head">
+      <button class="icon-btn" data-go="island" aria-label="Назад">←</button>
+      <h2 id="learnTitle">Зайчик</h2>
+    </div>
+    <div class="learn-head"><span class="face" id="learnFace">🐰</span></div>
+    <div class="trick" id="learnTrick"></div>
+    <div class="sheet" id="learnSheet"></div>
+    <div class="learn-actions">
+      <button class="btn btn--center btn--yellow" id="hideBtn">🙈 Сховати</button>
+      <button class="btn btn--center btn--green" id="learnStart">▶ Грати!</button>
+    </div>
+  </section>
+
+  <!-- ===== ГРА (острів і повторення) ===== -->
+  <section class="screen" id="game">
+    <div class="game-top">
+      <button class="icon-btn quit" aria-label="Вийти">✕</button>
+      <div class="progress" id="progress"></div>
+      <span class="pill">🍎 <span id="gameApples">0</span></span>
+    </div>
+
+    <div class="buddy">
+      <span class="face" id="buddyFace">🐰</span>
+      <div class="bubble" id="bubble">Привіт! Допоможи мені порахувати!</div>
+    </div>
+
+    <div class="task" id="task">
+      <div class="task-type" id="taskType">Обери відповідь</div>
+      <div class="question" id="question"></div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <div class="answers" id="answers"></div>
+    <button class="btn btn--center btn--yellow next-btn" id="nextBtn">Зрозуміло, далі →</button>
+  </section>
+
+  <!-- ===== ВИБІР ЧИСЛА ДЛЯ КУЛЬОК ===== -->
+  <section class="screen" id="balloonPick">
+    <div class="screen-head">
+      <button class="icon-btn" data-go="home" aria-label="Назад">←</button>
+      <h2>Лопни кульки</h2>
+    </div>
+    <p class="sub">Лопай лише кульки з відповідями з таблиці обраного числа. Кулька з іншим числом забирає ❤️</p>
+    <div class="num-grid" id="numGrid"></div>
+  </section>
+
+  <!-- ===== КУЛЬКИ ===== -->
+  <section class="screen" id="balloons">
+    <div class="balloon-hud">
+      <button class="icon-btn quit" aria-label="Вийти">✕</button>
+      <div class="goal">Лопай таблицю на <b id="bNum">3</b></div>
+      <span class="hearts" id="hearts">❤️❤️❤️</span>
+    </div>
+    <div class="balloon-hud" style="margin-top:8px;justify-content:space-between">
+      <span class="pill">🎈 <span id="bScore">0</span></span>
+      <span class="pill">⏱ <span id="bTime">45</span></span>
+    </div>
+    <div class="sky" id="sky"></div>
+  </section>
+
+  <!-- ===== ПАРИ ===== -->
+  <section class="screen" id="pairs">
+    <div class="screen-head">
+      <button class="icon-btn quit" aria-label="Вийти">✕</button>
+      <h2>Знайди пару</h2>
+    </div>
+    <div class="pairs-info"><span>Знайди приклад і його відповідь</span><span>Ходів: <b id="moves">0</b></span></div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- ===== РЕЗУЛЬТАТ ===== -->
+  <section class="screen result" id="result">
+    <div id="resultBody"></div>
+    <div class="actions">
+      <button class="btn btn--center btn--green" id="againBtn">🔁 Ще раз</button>
+      <button class="btn btn--center" id="backBtn">🏠 На головну</button>
+    </div>
+  </section>
+
+  <!-- ===== МОЯ ТАБЛИЦЯ ===== -->
+  <section class="screen" id="table">
+    <div class="screen-head">
+      <button class="icon-btn" data-go="home" aria-label="Назад">←</button>
+      <h2>Моя таблиця</h2>
+    </div>
+    <div class="legend">
+      <span><i class="m3"></i>Знаю</span>
+      <span><i class="m2"></i>Вчу</span>
+      <span><i class="m1"></i>Важко</span>
+      <span><i class="m0"></i>Ще не було</span>
+    </div>
+    <div class="grid10" id="grid10"></div>
+    <div class="cell-info" id="cellInfo">
+      <p style="color:var(--muted);padding-top:28px">Натисни на клітинку, щоб побачити приклад</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* =====================================================
+   ДАНІ
+   ===================================================== */
+const ANIMALS = {
+  1:  { face: '🐣', name: 'Курчатко',  color: '#ffb72b' },
+  2:  { face: '🐰', name: 'Зайчик',    color: '#ff7eb3' },
+  3:  { face: '🐸', name: 'Жабка',     color: '#3ccf6e' },
+  4:  { face: '🐱', name: 'Котик',     color: '#ff9f43' },
+  5:  { face: '🐶', name: 'Цуцик',     color: '#c08b5c' },
+  6:  { face: '🦊', name: 'Лисичка',   color: '#ff7a3d' },
+  7:  { face: '🐼', name: 'Панда',     color: '#6e6a92' },
+  8:  { face: '🐙', name: 'Восьминіг', color: '#9b7bff' },
+  9:  { face: '🦁', name: 'Левеня',    color: '#e0a800' },
+  10: { face: '🦄', name: 'Єдиноріг',  color: '#ff5ca8' },
+};
+const OWL = { face: '🦉', name: 'Сова', color: '#9b7bff' };
+
+const TRICKS = {
+  1:  'Помножити на 1 — нічого не змінити: <b>1 × 7 = 7</b>.',
+  2:  'Помножити на 2 — це додати число саме до себе: <b>2 × 8 = 8 + 8 = 16</b>.',
+  3:  'Помнож на 2 і додай число ще раз: <b>3 × 6 = 12 + 6 = 18</b>.',
+  4:  'Подвій двічі: <b>4 × 7 → 14 → 28</b>.',
+  5:  'Відповідь завжди закінчується на <b>0</b> або <b>5</b>. А ще 5 × 8 — це половина від 10 × 8: <b>80 → 40</b>.',
+  6:  '6 × парне число закінчується тією ж цифрою: <b>6 × 4 = 24</b>, <b>6 × 8 = 48</b>.',
+  7:  'Віршик: <b>5, 6, 7, 8 → 56 = 7 × 8</b>. А 7 × 7 = 49 — «сім на сім, сорок дев\'ять, всім!»',
+  8:  'У мене 8 ніжок! Подвій тричі: <b>8 × 3 → 6 → 12 → 24</b>.',
+  9:  'Цифри відповіді в сумі дають 9: <b>9 × 7 = 63</b> (6 + 3 = 9). А перша цифра на 1 менша за множник: 9 × <b>7</b> = <b>6</b>3.',
+  10: 'Просто допиши нуль: <b>10 × 6 = 60</b>.',
+};
+const PRAISE = ['Супер!', 'Клас!', 'Молодець!', 'Чудово!', 'Ти розумничка!', 'Вау!', 'Так тримати!', 'Ідеально!', 'Ура!'];
+const TASK_TITLES = { choose: 'Обери відповідь', missing: 'Якого числа не вистачає?', tf: 'Правда чи ні?' };
+
+/* =====================================================
+   ЗБЕРЕЖЕННЯ
+   ===================================================== */
+const SAVE_KEY = 'mult_island_v1';
+const defaults = { stars: {}, facts: {}, apples: 0, balloonBest: {}, pairsBest: 0, sound: true };
+let save = load();
+function load() {
+  try { return Object.assign({}, defaults, JSON.parse(localStorage.getItem(SAVE_KEY)) || {}); }
+  catch (e) { return JSON.parse(JSON.stringify(defaults)); }
+}
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+
+/* =====================================================
+   ДОПОМІЖНЕ
+   ===================================================== */
+const $ = id => document.getElementById(id);
+const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = arr => arr[rand(0, arr.length - 1)];
+const shuffle = arr => { for (let i = arr.length - 1; i > 0; i--) { const j = rand(0, i); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+const key = (a, b) => Math.min(a, b) + 'x' + Math.max(a, b);
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+
+(function makeClouds() {
+  const box = $('clouds');
+  for (let i = 0; i < 5; i++) {
+    const c = document.createElement('div');
+    c.className = 'cloud';
+    const w = rand(70, 140);
+    c.style.width = w + 'px'; c.style.height = w * .35 + 'px';
+    c.style.top = rand(2, 45) + '%';
+    c.style.animationDuration = rand(40, 80) + 's';
+    c.style.animationDelay = -rand(0, 60) + 's';
+    box.appendChild(c);
+  }
+})();
+
+/* =====================================================
+   ЗВУКИ
+   ===================================================== */
+let audioCtx = null;
+function tone(freq, start, dur, type = 'sine', vol = .18) {
+  if (!save.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
+    const t = audioCtx.currentTime + start;
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g).connect(audioCtx.destination);
+    o.start(t); o.stop(t + dur);
+  } catch (e) {}
+}
+const sfx = {
+  right: () => { tone(660, 0, .12); tone(990, .09, .18); },
+  wrong: () => { tone(260, 0, .22, 'triangle', .2); tone(200, .12, .28, 'triangle', .2); },
+  pop:   () => tone(rand(700, 1100), 0, .08, 'square', .06),
+  flip:  () => tone(520, 0, .06, 'sine', .08),
+  win:   () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .12, .25)),
+};
+function updateSoundBtn() { $('soundBtn').textContent = save.sound ? '🔊' : '🔇'; }
+$('soundBtn').onclick = () => { save.sound = !save.sound; persist(); updateSoundBtn(); sfx.right(); };
+
+/* =====================================================
+   НАВІГАЦІЯ
+   ===================================================== */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  window.scrollTo(0, 0);
+  ({ home: renderHome, island: renderIsland, table: renderTable, balloonPick: renderNumGrid })[id]?.();
+}
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) show(go.dataset.go);
+  const st = e.target.closest('[data-start]');
+  if (st) {
+    if (st.dataset.start === 'review') startQuiz('review');
+    if (st.dataset.start === 'pairs') startPairs();
+  }
+  if (e.target.closest('.quit')) quit();
+});
+
+let current = null; // { mode, ... } — що зараз грається, щоб «Ще раз» знав, що перезапустити
+function quit() {
+  stopBalloons();
+  if (current && current.mode === 'island') show('island');
+  else if (current && current.mode === 'balloons') show('balloonPick');
+  else show('home');
+}
+
+/* =====================================================
+   ГОЛОВНА
+   ===================================================== */
+function friendsCount() { return Object.values(save.stars).filter(s => s > 0).length; }
+function renderHome() {
+  $('apples').textContent = save.apples;
+  $('friends').textContent = friendsCount();
+  updateSoundBtn();
+}
+
+/* =====================================================
+   ОСТРІВ
+   ===================================================== */
+function renderIsland() {
+  $('islandList').innerHTML = range(1, 10).map(n => {
+    const a = ANIMALS[n], s = save.stars[n] || 0;
+    return `<button class="friend ${s ? '' : 'locked'}" data-learn="${n}">
+      <span class="num" style="background:${a.color}">${n}</span>
+      <div class="face">${a.face}</div>
+      <div class="name">${a.name}</div>
+      <div class="stars">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</div>
+    </button>`;
+  }).join('');
+}
+$('islandList').addEventListener('click', e => {
+  const b = e.target.closest('[data-learn]');
+  if (b) openLearn(+b.dataset.learn);
+});
+
+let learnNum = 2;
+function openLearn(n) {
+  learnNum = n;
+  const a = ANIMALS[n];
+  $('learnTitle').textContent = `${a.name} · на ${n}`;
+  $('learnFace').textContent = a.face;
+  $('learnTrick').innerHTML = `💡 <b>Секрет:</b> ${TRICKS[n]}`;
+  $('learnSheet').innerHTML = range(1, 10).map(i =>
+    `<button><span>${n} × ${i}</span><b>${n * i}</b></button>`).join('');
+  $('hideBtn').textContent = '🙈 Сховати';
+  show('learn');
+}
+// «Сховати» — закрити відповіді й перевірити себе, натискаючи по одній
+$('hideBtn').onclick = () => {
+  const btns = $('learnSheet').querySelectorAll('button');
+  const anyHidden = [...btns].some(b => b.classList.contains('hide'));
+  btns.forEach(b => b.classList.toggle('hide', !anyHidden));
+  $('hideBtn').textContent = anyHidden ? '🙈 Сховати' : '👀 Показати';
+};
+$('learnSheet').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (b && b.classList.contains('hide')) { b.classList.remove('hide'); sfx.flip(); }
+});
+$('learnStart').onclick = () => startQuiz('island', learnNum);
+
+/* =====================================================
+   ПИТАННЯ
+   ===================================================== */
+function weight(a, b) {
+  const f = save.facts[key(a, b)];
+  if (!f) return 2;
+  return Math.max(.4, 1 + f.w * 2 - f.c * .3);
+}
+function pickWeighted() {
+  const pool = [];
+  for (let a = 2; a <= 9; a++) for (let b = a; b <= 10; b++) pool.push([a, b, weight(a, b)]);
+  let r = Math.random() * pool.reduce((s, p) => s + p[2], 0);
+  for (const p of pool) { r -= p[2]; if (r <= 0) return Math.random() < .5 ? [p[0], p[1]] : [p[1], p[0]]; }
+  return [7, 8];
+}
+function wrongProducts(a, b) {
+  const c = a * b;
+  const cand = new Set([a * (b + 1), a * (b - 1), (a + 1) * b, (a - 1) * b, c + 1, c - 1, c + 2, c + 10, c - 10, a + b, c + a, c - b]);
+  cand.delete(c);
+  return shuffle([...cand].filter(x => x > 0 && x <= 110));
+}
+function makeTask(a, b, type) {
+  const c = a * b;
+  if (type === 'missing') {
+    const others = shuffle(range(1, 10).filter(x => x !== b)).slice(0, 3);
+    return { a, b, type,
+      html: `${a} × <span class="gap">?</span> = ${c}`,
+      solved: `${a} × <span class="gap">${b}</span> = ${c}`,
+      options: shuffle([{ label: b, ok: true }, ...others.map(x => ({ label: x, ok: false }))]) };
+  }
+  if (type === 'tf') {
+    const truth = Math.random() < .5;
+    const shown = truth ? c : wrongProducts(a, b)[0];
+    return { a, b, type,
+      html: `${a} × ${b} = ${shown}`,
+      solved: `${a} × ${b} = <span class="gap">${c}</span>`,
+      options: [{ label: '✓ Так', ok: truth, cls: 'tf-yes' }, { label: '✗ Ні', ok: !truth, cls: 'tf-no' }] };
+  }
+  const wrong = wrongProducts(a, b).slice(0, 3);
+  return { a, b, type: 'choose',
+    html: `${a} × ${b} = <span class="gap">?</span>`,
+    solved: `${a} × ${b} = <span class="gap">${c}</span>`,
+    options: shuffle([{ label: c, ok: true }, ...wrong.map(x => ({ label: x, ok: false }))]) };
+}
+function recordFact(a, b, ok) {
+  const k = key(a, b);
+  const f = save.facts[k] || (save.facts[k] = { c: 0, w: 0 });
+  if (ok) f.c++; else { f.w++; f.c = Math.max(0, f.c - 1); }
+}
+
+/* =====================================================
+   ВІКТОРИНА (острів і повторення з Совою)
+   ===================================================== */
+let Q = null;
+function startQuiz(mode, n) {
+  current = { mode, n };
+  const buddy = mode === 'island' ? ANIMALS[n] : OWL;
+  const types = shuffle(['choose', 'choose', 'choose', 'choose', 'missing', 'missing', 'missing', 'tf', 'tf', 'tf']);
+  let list;
+  if (mode === 'island') {
+    list = shuffle(range(1, 10)).map((b, i) => Math.random() < .3 ? [b, n, types[i]] : [n, b, types[i]]);
+  } else {
+    const seen = new Set();
+    list = [];
+    while (list.length < 10) {
+      const [a, b] = pickWeighted();
+      if (seen.has(key(a, b))) continue;
+      seen.add(key(a, b));
+      list.push([a, b, types[list.length]]);
+    }
+  }
+  Q = { mode, n, buddy, list, i: 0, retry: [], mistakes: 0, combo: 0, apples: 0, results: [] };
+
+  $('buddyFace').textContent = buddy.face;
+  $('bubble').textContent = mode === 'island'
+    ? `Привіт! Я ${buddy.name}. Допоможи мені з таблицею на ${n}!`
+    : 'Ух-ух! Повторімо те, що найважче!';
+  $('progress').innerHTML = list.map(() => '<i></i>').join('');
+  $('gameApples').textContent = 0;
+  show('game');
+  nextTask();
+}
+
+function nextTask() {
+  let t;
+  if (Q.i < Q.list.length) { const [a, b, type] = Q.list[Q.i]; t = makeTask(a, b, type); t.fromList = true; }
+  else if (Q.retry.length) { const [a, b] = Q.retry.shift(); t = makeTask(a, b, pick(['choose', 'missing'])); }
+  else return finishQuiz();
+
+  Q.task = t; Q.first = true;
+  $('taskType').textContent = t.fromList ? TASK_TITLES[t.type] : '🔁 Ще раз: ' + TASK_TITLES[t.type].toLowerCase();
+  $('question').innerHTML = t.html;
+  $('dots').innerHTML = '';
+  $('nextBtn').classList.remove('show');
+  $('task').classList.remove('shake');
+  const box = $('answers');
+  box.classList.remove('locked');
+  box.innerHTML = '';
+  t.options.forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'answer ' + (o.cls || '');
+    btn.textContent = o.label;
+    btn.onclick = e => answerTask(o, btn, e);
+    box.appendChild(btn);
+  });
+}
+
+function setProgress(i, cls) {
+  const dots = $('progress').children;
+  if (dots[i]) dots[i].className = cls;
+}
+
+function answerTask(opt, btn, ev) {
+  const t = Q.task, box = $('answers');
+  box.classList.add('locked');
+  const face = $('buddyFace');
+  face.classList.remove('jump', 'sad'); void face.offsetWidth;
+
+  if (opt.ok) {
+    btn.classList.add('right');
+    $('question').innerHTML = t.solved;
+    face.classList.add('jump');
+    sfx.right();
+    recordFact(t.a, t.b, true);
+    Q.combo++;
+    Q.apples++;
+    $('gameApples').textContent = Q.apples;
+    floatText('🍎+1', ev);
+    $('bubble').textContent = Q.combo >= 3 ? `${Q.combo} поспіль! ${pick(PRAISE)}` : pick(PRAISE);
+    if (Q.combo > 0 && Q.combo % 5 === 0) confetti(50);
+    if (t.fromList) { setProgress(Q.i, 'done'); Q.i++; }
+    persist();
+    setTimeout(nextTask, 800);
+  } else {
+    btn.classList.add('wrong');
+    [...box.children].forEach((b, k) => { if (t.options[k].ok) b.classList.add('right'); });
+    $('task').classList.add('shake');
+    face.classList.add('sad');
+    sfx.wrong();
+    if (navigator.vibrate) navigator.vibrate(80);
+    recordFact(t.a, t.b, false);
+    Q.combo = 0;
+    Q.mistakes++;
+    Q.retry.push([t.a, t.b]);
+    if (t.fromList) { setProgress(Q.i, 'miss'); Q.i++; }
+    persist();
+    $('question').innerHTML = t.solved;
+    $('bubble').innerHTML = `Не страшно! Дивись: <b>${t.a}</b> рядів по <b>${t.b}</b> — разом <b>${t.a * t.b}</b>. Зараз спробуємо ще раз!`;
+    drawDots($('dots'), t.a, t.b);
+    $('nextBtn').classList.add('show');
+  }
+}
+$('nextBtn').onclick = nextTask;
+
+function drawDots(el, rows, cols) {
+  el.style.gridTemplateColumns = `repeat(${cols}, 11px)`;
+  let html = '';
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) html += `<i style="background:${ANIMALS[(r % 10) + 1].color}"></i>`;
+  el.innerHTML = html;
+}
+
+function starsFor(mistakes) { return mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1; }
+
+function finishQuiz() {
+  const stars = starsFor(Q.mistakes);
+  save.apples += Q.apples;
+  let extra = '';
+  if (Q.mode === 'island') {
+    const prev = save.stars[Q.n] || 0;
+    if (!prev) extra = `<div class="sticker">🎉 ${Q.buddy.name} тепер твій друг! Наліпка в альбомі.</div>`;
+    else if (stars > prev) extra = `<div class="sticker">⭐ Новий рекорд зірок!</div>`;
+    if (stars > prev) save.stars[Q.n] = stars;
+  }
+  persist();
+  const title = stars === 3 ? 'Ідеально!' : stars === 2 ? 'Дуже добре!' : 'Молодець, що старалась!';
+  const note = Q.mistakes === 0 ? 'Жодної помилки!' : `Помилок: ${Q.mistakes}. ${stars < 3 ? 'Ще раз — і будуть 3 зірки!' : ''}`;
+  showResult(`
+    <span class="big-face">${Q.buddy.face}</span>
+    <h2>${title}</h2>
+    <div class="result-stars">${[1, 2, 3].map(i => `<span class="${i <= stars ? 'on' : ''}">⭐</span>`).join('')}</div>
+    <p>${note}</p>
+    <p>Зібрано яблучок: 🍎 ${Q.apples}</p>
+    ${extra}`, stars === 3 ? 180 : 70);
+}
+
+function showResult(html, confettiCount) {
+  $('resultBody').innerHTML = html;
+  show('result');
+  if (confettiCount) { confetti(confettiCount); sfx.win(); }
+}
+$('againBtn').onclick = () => {
+  if (!current) return show('home');
+  if (current.mode === 'pairs') startPairs();
+  else if (current.mode === 'balloons') startBalloons(current.n);
+  else startQuiz(current.mode, current.n);
+};
+$('backBtn').onclick = () => show('home');
+
+/* =====================================================
+   КУЛЬКИ
+   ===================================================== */
+function renderNumGrid() {
+  $('numGrid').innerHTML = range(2, 10).map(n => {
+    const best = save.balloonBest[n] ? `<span style="font-size:12px">рекорд ${save.balloonBest[n]}</span>` : '';
+    return `<button class="num-btn" style="background:${ANIMALS[n].color}" data-bn="${n}"><small>${ANIMALS[n].face}</small>${n}${best}</button>`;
+  }).join('');
+}
+$('numGrid').addEventListener('click', e => {
+  const b = e.target.closest('[data-bn]');
+  if (b) startBalloons(+b.dataset.bn);
+});
+
+let B = null;
+function startBalloons(n) {
+  stopBalloons();
+  current = { mode: 'balloons', n };
+  B = { n, score: 0, lives: 3, time: 45, items: [], last: 0, spawnIn: 0, missedGood: 0, raf: null, timer: null, over: false };
+  $('bNum').textContent = n;
+  $('bScore').textContent = 0;
+  $('bTime').textContent = 45;
+  $('hearts').textContent = '❤️❤️❤️';
+  $('sky').innerHTML = '';
+  show('balloons');
+  B.timer = setInterval(() => {
+    B.time--;
+    $('bTime').textContent = B.time;
+    if (B.time <= 0) endBalloons();
+  }, 1000);
+  B.last = performance.now();
+  B.raf = requestAnimationFrame(balloonLoop);
+}
+
+function spawnBalloon() {
+  const sky = $('sky');
+  const good = Math.random() < .55;
+  let value;
+  if (good) value = B.n * rand(1, 10);
+  else { do { value = rand(2, B.n * 10); } while (value % B.n === 0); }
+  const el = document.createElement('button');
+  el.className = 'balloon';
+  el.textContent = value;
+  el.style.background = pick(['#ff7eb3', '#4da3ff', '#3ccf6e', '#ffb72b', '#9b7bff', '#ff7a3d']);
+  const w = sky.clientWidth;
+  const x = rand(4, Math.max(5, w - 80));
+  el.style.left = x + 'px';
+  const item = { el, y: sky.clientHeight + 10, speed: 55 + Math.random() * 35 + (45 - B.time) * 1.4, good, value, sway: Math.random() * 6.28, x };
+  el.style.transform = `translateY(${item.y}px)`;
+  el.addEventListener('pointerdown', ev => hitBalloon(item, ev));
+  sky.appendChild(el);
+  B.items.push(item);
+}
+
+function hitBalloon(item, ev) {
+  if (item.hit || B.over) return;
+  item.hit = true;
+  const [a, b] = [B.n, item.value / B.n];
+  if (item.good) {
+    item.el.classList.add('pop');
+    B.score++;
+    $('bScore').textContent = B.score;
+    sfx.pop();
+    floatText('+1', ev);
+    recordFact(a, b, true);
+  } else {
+    item.el.classList.add('bad');
+    B.lives--;
+    $('hearts').textContent = '❤️'.repeat(B.lives) + '🤍'.repeat(3 - B.lives);
+    sfx.wrong();
+    if (navigator.vibrate) navigator.vibrate(80);
+    floatText(`${item.value} немає в таблиці на ${B.n}`, ev, true);
+    setTimeout(() => item.el.classList.add('pop'), 300);
+    if (B.lives <= 0) setTimeout(endBalloons, 400);
+  }
+  setTimeout(() => item.el.remove(), 400);
+  persist();
+}
+
+function balloonLoop(now) {
+  if (!B || B.over) return;
+  const dt = Math.min(.05, (now - B.last) / 1000);
+  B.last = now;
+  B.spawnIn -= dt;
+  if (B.spawnIn <= 0) { spawnBalloon(); B.spawnIn = Math.max(.55, 1.1 - (45 - B.time) * .012); }
+  B.items.forEach(it => {
+    if (it.hit) return;
+    it.y -= it.speed * dt;
+    it.sway += dt * 2;
+    it.el.style.transform = `translate(${Math.sin(it.sway) * 8}px, ${it.y}px)`;
+    if (it.y < -100) { it.hit = true; it.el.remove(); }
+  });
+  B.items = B.items.filter(it => !it.hit || it.el.isConnected);
+  B.raf = requestAnimationFrame(balloonLoop);
+}
+
+function stopBalloons() {
+  if (!B) return;
+  B.over = true;
+  clearInterval(B.timer);
+  cancelAnimationFrame(B.raf);
+}
+
+function endBalloons() {
+  if (B.over) return;
+  stopBalloons();
+  const best = save.balloonBest[B.n] || 0;
+  const record = B.score > best;
+  if (record) save.balloonBest[B.n] = B.score;
+  save.apples += B.score;
+  persist();
+  showResult(`
+    <span class="big-face">🎈</span>
+    <h2>${record && B.score > 0 ? 'Новий рекорд!' : B.lives <= 0 ? 'Кульки скінчились!' : 'Час вийшов!'}</h2>
+    <p>Таблиця на ${B.n}</p>
+    <div class="score">${B.score}</div>
+    <p>Рекорд: ${Math.max(best, B.score)} · 🍎 +${B.score}</p>`, record && B.score > 0 ? 150 : 0);
+}
+
+/* =====================================================
+   ЗНАЙДИ ПАРУ
+   ===================================================== */
+let P = null;
+function startPairs() {
+  current = { mode: 'pairs' };
+  const facts = [], products = new Set();
+  let guard = 0;
+  while (facts.length < 6 && guard++ < 500) {
+    const [a, b] = pickWeighted();
+    if (products.has(a * b)) continue;
+    products.add(a * b);
+    facts.push([a, b]);
+  }
+  const deck = shuffle(facts.flatMap(([a, b], id) => [
+    { id, text: `${a} × ${b}`, ans: false, a, b },
+    { id, text: String(a * b), ans: true, a, b },
+  ]));
+  P = { deck, open: [], matched: 0, moves: 0, busy: false };
+  $('moves').textContent = 0;
+  $('cards').innerHTML = deck.map((c, i) => `
+    <button class="card" data-card="${i}">
+      <div class="card-inner">
+        <div class="card-face card-back">🐾</div>
+        <div class="card-face card-front ${c.ans ? 'ans' : ''}">${c.text}</div>
+      </div>
+    </button>`).join('');
+  show('pairs');
+}
+$('cards').addEventListener('click', e => {
+  const el = e.target.closest('[data-card]');
+  if (!el || P.busy || el.classList.contains('open') || el.classList.contains('matched')) return;
+  el.classList.add('open');
+  sfx.flip();
+  P.open.push(el);
+  if (P.open.length < 2) return;
+
+  P.moves++;
+  $('moves').textContent = P.moves;
+  const [x, y] = P.open.map(c => P.deck[+c.dataset.card]);
+  if (x.id === y.id && x.ans !== y.ans) {
+    P.open.forEach(c => { c.classList.remove('open'); c.classList.add('matched'); });
+    P.open = [];
+    P.matched++;
+    recordFact(x.a, x.b, true);
+    sfx.right();
+    floatText('🍎+1', e);
+    if (P.matched === 6) setTimeout(finishPairs, 600);
+  } else {
+    P.busy = true;
+    setTimeout(() => { P.open.forEach(c => c.classList.remove('open')); P.open = []; P.busy = false; }, 900);
+  }
+});
+function finishPairs() {
+  const stars = P.moves <= 9 ? 3 : P.moves <= 13 ? 2 : 1;
+  save.apples += 6;
+  const record = !save.pairsBest || P.moves < save.pairsBest;
+  if (record) save.pairsBest = P.moves;
+  persist();
+  showResult(`
+    <span class="big-face">🃏</span>
+    <h2>Усі пари знайдено!</h2>
+    <div class="result-stars">${[1, 2, 3].map(i => `<span class="${i <= stars ? 'on' : ''}">⭐</span>`).join('')}</div>
+    <p>Ходів: ${P.moves} · найкраще: ${save.pairsBest}</p>
+    <p>🍎 +6</p>`, stars === 3 ? 160 : 70);
+}
+
+/* =====================================================
+   МОЯ ТАБЛИЦЯ
+   ===================================================== */
+function mastery(a, b) {
+  const f = save.facts[key(a, b)];
+  if (!f || (f.c === 0 && f.w === 0)) return 0;
+  if (f.c >= 3 && f.c >= f.w * 2) return 3;
+  if (f.w > f.c) return 1;
+  return 2;
+}
+function renderTable() {
+  let html = '<div class="h">×</div>';
+  for (let c = 1; c <= 10; c++) html += `<div class="h">${ANIMALS[c].face}</div>`;
+  for (let r = 1; r <= 10; r++) {
+    html += `<div class="h">${ANIMALS[r].face}</div>`;
+    for (let c = 1; c <= 10; c++) html += `<button class="m${mastery(r, c)}" data-cell="${r},${c}">${r * c}</button>`;
+  }
+  $('grid10').innerHTML = html;
+}
+$('grid10').addEventListener('click', e => {
+  const cell = e.target.closest('[data-cell]');
+  if (!cell) return;
+  const [a, b] = cell.dataset.cell.split(',').map(Number);
+  const label = ['Ще не траплялось', 'Поки важко — потренуйся!', 'Майже вивчено', 'Знаєш на відмінно! 🌟'][mastery(a, b)];
+  $('cellInfo').innerHTML = `<div class="eq">${a} × ${b} = <b>${a * b}</b></div>
+    <p style="color:var(--muted);margin:4px 0 4px">${label}</p><div class="dots" id="cellDots"></div>`;
+  drawDots($('cellDots'), a, b);
+});
+
+/* =====================================================
+   ЕФЕКТИ
+   ===================================================== */
+function floatText(text, ev, small) {
+  const el = document.createElement('div');
+  el.className = 'float-text';
+  el.textContent = text;
+  if (small) { el.style.fontSize = '16px'; el.style.color = 'var(--red-d)'; }
+  const x = ev && ev.clientX ? ev.clientX : innerWidth / 2;
+  const y = ev && ev.clientY ? ev.clientY : innerHeight / 2;
+  el.style.left = Math.min(x - 20, innerWidth - 200) + 'px';
+  el.style.top = (y - 30) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+const cv = $('confetti'), ctx = cv.getContext('2d');
+let parts = [], raf = null;
+function confetti(n) {
+  cv.width = innerWidth; cv.height = innerHeight;
+  const colors = ['#ffcd38', '#ff7eb3', '#4da3ff', '#3ccf6e', '#9b7bff', '#ff9f43'];
+  for (let i = 0; i < n; i++) parts.push({
+    x: innerWidth / 2 + rand(-40, 40), y: innerHeight * .45,
+    vx: (Math.random() - .5) * 14, vy: -Math.random() * 14 - 4,
+    s: rand(6, 11), c: pick(colors), r: Math.random() * 6, vr: (Math.random() - .5) * .3, life: 0
+  });
+  if (!raf) loop();
+}
+function loop() {
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  parts.forEach(p => {
+    p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+    ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+    ctx.restore();
+  });
+  parts = parts.filter(p => p.y < cv.height + 20 && p.life < 240);
+  raf = parts.length ? requestAnimationFrame(loop) : (ctx.clearRect(0, 0, cv.width, cv.height), null);
+}
+
+renderHome();
+</script>
+</body>
+</html>
